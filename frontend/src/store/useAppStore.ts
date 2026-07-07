@@ -26,11 +26,13 @@ interface AppStore {
   activeDataset: Dataset | null
   datasets: Dataset[]
   view: 'executive' | 'analyst'
+  tier: 'executive' | 'analyst'
   activeTab: string | null
   chatMessages: ChatMessage[]
   setActiveDataset: (dataset: Dataset | null) => void
   setDatasets: (datasets: Dataset[]) => void
   setView: (view: 'executive' | 'analyst') => void
+  setTier: (tier: 'executive' | 'analyst') => void
   setActiveTab: (tab: string | null) => void
   addChatMessage: (msg: ChatMessage) => void
   clearChat: () => void
@@ -40,11 +42,13 @@ export const useAppStore = create<AppStore>((set) => ({
   activeDataset: null,
   datasets: [],
   view: 'executive',
+  tier: 'executive',
   activeTab: null,
   chatMessages: [],
   setActiveDataset: (dataset) => set({ activeDataset: dataset, activeTab: dataset?.tabNames[0] ?? null }),
   setDatasets: (datasets) => set({ datasets }),
   setView: (view) => set({ view }),
+  setTier: (tier) => set({ tier }),
   setActiveTab: (tab) => set({ activeTab: tab }),
   addChatMessage: (msg) => set((s) => ({ chatMessages: [...s.chatMessages, msg] })),
   clearChat: () => set({ chatMessages: [] }),
