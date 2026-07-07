@@ -43,9 +43,16 @@ def test_stats_endpoint_404_for_bad_dataset():
 
 def test_chart_bad_type_returns_400():
     ds_id = str(uuid.uuid4())
-    with TestSessionLocal() as db:
+
+    # Ensure our override is active for this test regardless of module import order
+    app.dependency_overrides[get_db] = override_get_db
+
+    db = TestSessionLocal()
+    try:
         db.add(Dataset(id=ds_id, name="test.xlsx", blob_path="fake.xlsx", storage_backend="local", tab_names=["Sheet1"]))
         db.commit()
+    finally:
+        db.close()
 
     mock_df = pd.DataFrame({"x": [1, 2], "y": [3, 4]})
     with patch("backend.api.routes.analytics.parse_excel", return_value={"Sheet1": mock_df}):
