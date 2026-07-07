@@ -25,7 +25,9 @@ def _classify_column(series: pd.Series) -> str:
             pass
     if pd.api.types.is_numeric_dtype(series):
         return "numeric"
-    unique_ratio = series.nunique(dropna=True) / max(len(series.dropna()), 1)
-    if unique_ratio < 0.5:
+    unique_count = series.nunique(dropna=True)
+    total = max(len(series.dropna()), 1)
+    unique_ratio = unique_count / total
+    if unique_count <= 10 or unique_ratio < 0.5:
         return "categorical"
     return "text"
