@@ -4,9 +4,23 @@ from functools import lru_cache
 
 class Settings(BaseSettings):
     llm_provider: str = "azure_openai"
+
+    # Standard Azure OpenAI (direct)
     azure_openai_api_key: str = ""
     azure_openai_endpoint: str = ""
     azure_openai_deployment: str = "gpt-4o"
+
+    # Accenture GenAI Gateway — OAuth2 client credentials
+    azure_openai_tenant_id: str = ""
+    azure_openai_token_url: str = ""
+    azure_openai_token_client_id: str = ""
+    azure_openai_token_client_secret: str = ""
+    azure_openai_token_scope: str = ""
+    azure_openai_engine_id: str = ""
+    azure_openai_model_id: str = ""
+    azure_openai_x_authcode: str = ""
+    azure_openai_x_user: str = "1"
+
     openai_api_key: str = ""
     anthropic_api_key: str = ""
 
