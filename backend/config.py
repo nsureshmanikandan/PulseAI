@@ -5,21 +5,12 @@ from functools import lru_cache
 class Settings(BaseSettings):
     llm_provider: str = "azure_openai"
 
-    # Standard Azure OpenAI (direct)
-    azure_openai_api_key: str = ""
+    # Accenture lbpass gateway (use LBPASS_API_KEY to avoid conflict with system AZURE_OPENAI_API_KEY)
+    lbpass_api_key: str = ""          # maps to LBPASS_API_KEY env var
+    azure_openai_api_key: str = ""    # system-level key (not used by lbpass)
     azure_openai_endpoint: str = ""
     azure_openai_deployment: str = "gpt-4o"
-
-    # Accenture GenAI Gateway — OAuth2 client credentials
-    azure_openai_tenant_id: str = ""
-    azure_openai_token_url: str = ""
-    azure_openai_token_client_id: str = ""
-    azure_openai_token_client_secret: str = ""
-    azure_openai_token_scope: str = ""
-    azure_openai_engine_id: str = ""
-    azure_openai_model_id: str = ""
-    azure_openai_x_authcode: str = ""
-    azure_openai_x_user: str = "1"
+    azure_openai_api_version: str = "2024-02-01"
 
     openai_api_key: str = ""
     anthropic_api_key: str = ""
