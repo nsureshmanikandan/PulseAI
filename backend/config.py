@@ -17,8 +17,8 @@ class Settings(BaseSettings):
     aws_secret_access_key: str = ""
     local_storage_path: str = "./uploads"
 
-    database_url: str = "postgresql://pulseai:pulseai@postgres:5432/pulseai"
-    redis_url: str = "redis://redis:6379/0"
+    database_url: str = ""
+    redis_url: str = ""
 
     max_upload_size_mb: int = 50
     celery_task_timeout: int = 60
@@ -29,7 +29,7 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins_list(self) -> list[str]:
-        return [o.strip() for o in self.cors_origins.split(",")]
+        return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
 
 
 @lru_cache

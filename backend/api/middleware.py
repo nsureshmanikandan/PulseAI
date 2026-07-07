@@ -1,4 +1,4 @@
-from fastapi import Request
+from fastapi import Request, HTTPException
 from fastapi.responses import JSONResponse
 import logging
 
@@ -8,6 +8,8 @@ logger = logging.getLogger(__name__)
 async def error_handler_middleware(request: Request, call_next):
     try:
         return await call_next(request)
+    except HTTPException:
+        raise
     except Exception as exc:
         logger.error(f"Unhandled error: {exc}", exc_info=True)
         return JSONResponse(status_code=500, content={"detail": "Internal server error"})

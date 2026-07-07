@@ -5,7 +5,7 @@ from backend.config import get_settings
 
 settings = get_settings()
 
-engine = create_engine(settings.database_url)
+engine = create_engine(settings.database_url, pool_pre_ping=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -52,7 +52,7 @@ class SavedQuery(Base):
     __tablename__ = "saved_queries"
 
     id = Column(String, primary_key=True)
-    dataset_id = Column(String, nullable=False)
+    dataset_id = Column(String, ForeignKey("datasets.id"), nullable=False)
     question = Column(Text, nullable=False)
     chart_config = Column(JSON)
     created_at = Column(DateTime, server_default=func.now())
@@ -76,5 +76,8 @@ def get_db():
     db = SessionLocal()
     try:
         yield db
+    except Exception:
+        db.rollback()
+        raise
     finally:
         db.close()
