@@ -5,23 +5,46 @@ import NarrativeSummary from '../../components/ai/NarrativeSummary'
 import InsightCard from '../../components/ai/InsightCard'
 import PlotlyChart from '../../components/charts/PlotlyChart'
 
-interface KPI { column: string; sum: number; mean: number; min: number; max: number }
+interface KPI {
+  id: string
+  label: string
+  value: string
+  raw: number
+  subtitle: string
+  type: 'rate' | 'currency' | 'score' | 'days' | 'count' | 'numeric'
+  color: 'red' | 'green' | 'blue' | 'yellow' | 'purple'
+}
 interface Insight { type: string; column: string; message: string; severity: 'info' | 'warning' | 'critical' }
 interface AutoChart { title: string; subtitle: string; data: object[]; layout: object }
 
+const COLOR_MAP: Record<string, { text: string; bg: string; border: string; icon: string }> = {
+  red:    { text: '#f87171', bg: 'rgba(239,68,68,0.10)',   border: 'rgba(239,68,68,0.25)',   icon: '⚠️' },
+  green:  { text: '#34d399', bg: 'rgba(16,185,129,0.10)',  border: 'rgba(16,185,129,0.25)',  icon: '✅' },
+  blue:   { text: '#60a5fa', bg: 'rgba(59,130,246,0.10)',  border: 'rgba(59,130,246,0.25)',  icon: '📊' },
+  yellow: { text: '#fbbf24', bg: 'rgba(245,158,11,0.10)',  border: 'rgba(245,158,11,0.25)',  icon: '⏱️' },
+  purple: { text: '#a78bfa', bg: 'rgba(139,92,246,0.10)',  border: 'rgba(139,92,246,0.25)',  icon: '🎯' },
+}
+
+const TYPE_ICON: Record<string, string> = {
+  rate: '📈', currency: '💰', score: '🎯', days: '⏱️', count: '🔢', numeric: '📊',
+}
+
 function KPICard({ kpi }: { kpi: KPI }) {
+  const c = COLOR_MAP[kpi.color] ?? COLOR_MAP.blue
   return (
-    <div className="rounded-2xl p-5 border hover:border-blue-500/30 transition-colors"
-      style={{ background: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.09)' }}>
-      <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold truncate">{kpi.column}</p>
-      <p className="text-3xl font-bold text-white mt-2 tabular-nums">
-        {kpi.sum.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-      </p>
-      <div className="flex gap-3 mt-2.5 text-xs text-gray-500">
-        <span>Avg <span className="text-gray-300 font-medium">{kpi.mean.toLocaleString(undefined, { maximumFractionDigits: 1 })}</span></span>
-        <span>Min <span className="text-gray-300 font-medium">{kpi.min.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span></span>
-        <span>Max <span className="text-gray-300 font-medium">{kpi.max.toLocaleString(undefined, { maximumFractionDigits: 0 })}</span></span>
+    <div className="rounded-2xl p-4 border transition-all hover:scale-[1.01]"
+      style={{ background: c.bg, borderColor: c.border }}>
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-base">{TYPE_ICON[kpi.type] ?? '📊'}</span>
+        <span className="text-xs px-2 py-0.5 rounded-full font-semibold uppercase tracking-wide"
+          style={{ background: 'rgba(0,0,0,0.25)', color: c.text }}>
+          {kpi.type}
+        </span>
       </div>
+      <p className="text-xs font-semibold uppercase tracking-widest mb-1 truncate"
+        style={{ color: c.text }}>{kpi.label}</p>
+      <p className="text-2xl font-bold text-white tabular-nums leading-tight">{kpi.value}</p>
+      <p className="text-xs mt-1.5 truncate" style={{ color: 'rgba(255,255,255,0.4)' }}>{kpi.subtitle}</p>
     </div>
   )
 }
@@ -136,7 +159,7 @@ export function ExecutiveDashboard() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {loading && !kpis.length
             ? Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-28" />)
-            : kpis.map((kpi) => <KPICard key={kpi.column} kpi={kpi} />)
+            : kpis.map((kpi) => <KPICard key={kpi.id} kpi={kpi} />)
           }
         </div>
       </section>
