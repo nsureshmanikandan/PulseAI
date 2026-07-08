@@ -96,7 +96,7 @@ cd C:\Users\n.sureshmanikandan\Repo1\PulseAI
 copy .env.example .env
 ```
 
-`.env` is pre-configured for local dev (SQLite + lbpass gateway). No changes needed.
+`.env` is pre-configured for local dev (SQLite + AZURE gateway). No changes needed.
 
 ### 2. Install Python dependencies
 
@@ -244,7 +244,7 @@ PulseAI/
 | Variable | Description | Default |
 |---|---|---|
 | `LLM_PROVIDER` | `azure_openai` / `openai` / `claude` | `azure_openai` |
-| `LBPASS_API_KEY` | Azure GenAI Gateway API key | set in `.env` |
+| `AZURE_API_KEY` | Azure GenAI Gateway API key | set in `.env` |
 | `AZURE_OPENAI_ENDPOINT` | Gateway base URL | set in `.env` |
 | `AZURE_OPENAI_DEPLOYMENT` | Model deployment name | `gpt-4o` |
 | `DATABASE_URL` | SQLite for local, Postgres for prod | `sqlite:///./pulseai.db` |
@@ -292,7 +292,7 @@ Starts backend (port 8000), frontend (port 3000), PostgreSQL, and Redis.
 
 **Backend:** FastAPI · Python 3.13 · SQLAlchemy · pandas 2.2 · openpyxl 3.1.5 · Uvicorn
 
-**AI:** GPT-4o · Azure lbpass GenAI Gateway · WebSocket streaming
+**AI:** GPT-4o · Azure AZURE GenAI Gateway · WebSocket streaming
 
 **Data:** SQLite (local) · PostgreSQL (prod) · Local file storage (swappable to Azure Blob / S3)
 
