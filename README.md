@@ -3,7 +3,7 @@
 > **Turn raw Excel & CSV data into decisions — instantly.**
 > Upload any file, get AI-powered dashboards, interactive charts, and GPT-4o chat in under 2 minutes. No SQL. No code. No BI tool training.
 
-Built with **React 18 + FastAPI + GPT-4o** via Accenture GenAI Gateway.
+Built with **React 18 + FastAPI + GPT-4o** via Azure GenAI Gateway.
 
 ---
 
@@ -244,7 +244,7 @@ PulseAI/
 | Variable | Description | Default |
 |---|---|---|
 | `LLM_PROVIDER` | `azure_openai` / `openai` / `claude` | `azure_openai` |
-| `LBPASS_API_KEY` | Accenture GenAI Gateway API key | set in `.env` |
+| `LBPASS_API_KEY` | Azure GenAI Gateway API key | set in `.env` |
 | `AZURE_OPENAI_ENDPOINT` | Gateway base URL | set in `.env` |
 | `AZURE_OPENAI_DEPLOYMENT` | Model deployment name | `gpt-4o` |
 | `DATABASE_URL` | SQLite for local, Postgres for prod | `sqlite:///./pulseai.db` |
@@ -282,7 +282,7 @@ Starts backend (port 8000), frontend (port 3000), PostgreSQL, and Redis.
 | Chart types auto-generated | 6 (histogram, bar, scatter, heatmap, box, donut) |
 | AI questions per tab | 10 suggested + unlimited free-form |
 | Excel tabs supported | Unlimited (tested with 6-tab, 2,530-row file) |
-| AI engine | GPT-4o via Accenture GenAI Gateway |
+| AI engine | GPT-4o via Azure GenAI Gateway |
 
 ---
 
@@ -292,10 +292,10 @@ Starts backend (port 8000), frontend (port 3000), PostgreSQL, and Redis.
 
 **Backend:** FastAPI · Python 3.13 · SQLAlchemy · pandas 2.2 · openpyxl 3.1.5 · Uvicorn
 
-**AI:** GPT-4o · Accenture lbpass GenAI Gateway · WebSocket streaming
+**AI:** GPT-4o · Azure lbpass GenAI Gateway · WebSocket streaming
 
 **Data:** SQLite (local) · PostgreSQL (prod) · Local file storage (swappable to Azure Blob / S3)
 
 ---
 
-*Powered by GPT-4o · Accenture GenAI Gateway · Built on React + FastAPI*
+*Powered by GPT-4o · Azure GenAI Gateway · Built on React + FastAPI*
