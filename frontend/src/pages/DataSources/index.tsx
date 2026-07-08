@@ -181,9 +181,19 @@ export function DataSources() {
               </div>
             ) : relationships.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
-                <span className="text-3xl block mb-2">🔍</span>
-                <p className="text-sm">No FK relationships detected.</p>
-                <p className="text-xs mt-1">Upload a multi-tab Excel file (e.g. with customer_id linking multiple sheets) to see cross-tab relationships here.</p>
+                {activeDataset.tabNames.length <= 1 ? (
+                  <>
+                    <span className="text-3xl block mb-2">📄</span>
+                    <p className="text-sm text-gray-400 font-medium">Single-tab file</p>
+                    <p className="text-xs mt-1 text-gray-600">FK relationships only apply to multi-tab Excel files.<br/>Try selecting <span className="text-blue-500">FinanceData_MultiTab.xlsx</span>, <span className="text-blue-500">Retail_Sales.xlsx</span>, or <span className="text-blue-500">HR_Workforce.xlsx</span>.</p>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-3xl block mb-2">🔍</span>
+                    <p className="text-sm text-gray-400 font-medium">No shared key columns detected</p>
+                    <p className="text-xs mt-1 text-gray-600">No columns with matching names and overlapping values were found across tabs.</p>
+                  </>
+                )}
               </div>
             ) : (
               <div className="space-y-2">
