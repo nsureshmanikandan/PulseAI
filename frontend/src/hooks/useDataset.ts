@@ -5,7 +5,7 @@ interface Dataset {
   id: string
   name: string
   status: string
-  tab_names?: string
+  tab_names?: string | string[]
   row_count?: number
 }
 
@@ -64,14 +64,30 @@ export function useDataset() {
     }
   }, [])
 
-  const selectDataset = useCallback((dataset: Dataset) => {
-    // Parse tab_names from JSON string if needed
+  const selectDataset = useCallback(async (dataset: Dataset) => {
+    // Re-fetch the dataset from API to get up-to-date tab_names after processing
     let tabNames: string[] = []
     try {
-      tabNames = JSON.parse(dataset.tab_names || '[]')
-    } catch {
-      tabNames = []
+      const res = await fetch(`/api/datasets/${dataset.id}`)
+      if (res.ok) {
+        const fresh = await res.json()
+        const raw = fresh.tab_names
+        if (Array.isArray(raw)) tabNames = raw
+        else if (typeof raw === 'string' && raw) {
+          try { tabNames = JSON.parse(raw) } catch { tabNames = [raw] }
+        }
+      }
+    } catch { /* fall through to stale data */ }
+
+    // Fallback to stale tab_names from list if re-fetch failed
+    if (tabNames.length === 0) {
+      const raw = dataset.tab_names
+      if (Array.isArray(raw)) tabNames = raw as string[]
+      else if (typeof raw === 'string' && raw) {
+        try { tabNames = JSON.parse(raw) } catch { tabNames = [raw] }
+      }
     }
+
     setActiveDataset({
       id: dataset.id,
       name: dataset.name,

@@ -45,7 +45,13 @@ export const useAppStore = create<AppStore>((set) => ({
   tier: 'executive',
   activeTab: null,
   chatMessages: [],
-  setActiveDataset: (dataset) => set({ activeDataset: dataset, activeTab: dataset?.tabNames[0] ?? null }),
+  setActiveDataset: (dataset) => set((state) => ({
+    activeDataset: dataset,
+    // Keep existing activeTab if it belongs to new dataset, else use first tab
+    activeTab: dataset
+      ? (dataset.tabNames.includes(state.activeTab ?? '') ? state.activeTab : dataset.tabNames[0] ?? null)
+      : null,
+  })),
   setDatasets: (datasets) => set({ datasets }),
   setView: (view) => set({ view }),
   setTier: (tier) => set({ tier }),

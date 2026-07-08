@@ -1,32 +1,40 @@
+import ReactMarkdown from 'react-markdown'
+
 interface NarrativeSummaryProps {
   narrative: string
   isLoading?: boolean
 }
 
 export default function NarrativeSummary({ narrative, isLoading = false }: NarrativeSummaryProps) {
-  if (isLoading) {
-    return (
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-blue-500">✨</span>
-          <span className="text-sm font-semibold text-blue-700">AI Data Narrative</span>
-        </div>
-        <div className="space-y-2">
-          <div className="h-3 bg-blue-200 rounded animate-pulse w-full" />
-          <div className="h-3 bg-blue-200 rounded animate-pulse w-4/5" />
-          <div className="h-3 bg-blue-200 rounded animate-pulse w-3/5" />
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100">
+    <div className="rounded-2xl p-5 border" style={{ background: 'rgba(59,130,246,0.06)', borderColor: 'rgba(59,130,246,0.2)' }}>
       <div className="flex items-center gap-2 mb-3">
-        <span className="text-blue-500">✨</span>
-        <span className="text-sm font-semibold text-blue-700">AI Data Narrative</span>
+        <span className="text-base">✨</span>
+        <span className="text-sm font-semibold text-blue-400">AI Data Narrative</span>
       </div>
-      <p className="text-sm text-gray-700 leading-relaxed">{narrative || 'No narrative available.'}</p>
+
+      {isLoading ? (
+        <div className="space-y-2">
+          {[100, 80, 60].map((w, i) => (
+            <div key={i} className="h-3 rounded animate-pulse" style={{ width: `${w}%`, background: 'rgba(59,130,246,0.15)' }} />
+          ))}
+        </div>
+      ) : narrative ? (
+        <div className="text-sm text-gray-300 leading-relaxed prose-sm">
+          <ReactMarkdown
+            components={{
+              p: ({ children }) => <p className="mb-2 last:mb-0 text-gray-300">{children}</p>,
+              strong: ({ children }) => <strong className="font-semibold text-white">{children}</strong>,
+              ul: ({ children }) => <ul className="list-disc list-inside space-y-1 mb-2 text-gray-300">{children}</ul>,
+              li: ({ children }) => <li>{children}</li>,
+            }}
+          >
+            {narrative}
+          </ReactMarkdown>
+        </div>
+      ) : (
+        <p className="text-sm text-gray-500 italic">Narrative will appear after dataset analysis completes.</p>
+      )}
     </div>
   )
 }
