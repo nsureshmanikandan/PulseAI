@@ -71,10 +71,10 @@ Ready-to-use demo files in `test_data/`:
 
 | File | Rows / Tabs | Use Case |
 |---|---|---|
-| `Banking_LoanPortfolio.xlsx` | 300 rows, 1 tab | Loan risk, DPD, credit scores, collateral |
-| `Insurance_Claims.xlsx` | 400 rows, 1 tab | Claims, fraud flags, processing time |
-| `Retail_Sales.xlsx` | 800 + 100 + 120 rows, 3 tabs | Sales, Products, Returns with FK link |
-| `HR_Workforce.xlsx` | 500 + 1500 + 80 rows, 3 tabs | Employees, Performance, Attrition |
+| `Banking_LoanPortfolio.xlsx` | 1,820 rows, 5 tabs | Customers, Loans, Payments, Credit Bureau, Collateral |
+| `Insurance_Claims.xlsx` | 1,230 rows, 4 tabs | Policyholders, Policies, Claims, Fraud Indicators |
+| `Retail_Sales.xlsx` | 3,062 rows, 5 tabs | Customers, Orders, Order Items, Products, Returns |
+| `HR_Workforce.xlsx` | 3,411 rows, 5 tabs | Employees, Departments, Performance, Salary History, Training |
 | `FinanceData_MultiTab.xlsx` | 2,530 rows, 6 tabs | Full FK relationship demo (finance) |
 | `PulseAI_Presentation.pptx` | 13 slides | Enterprise deck for customer briefings |
 
