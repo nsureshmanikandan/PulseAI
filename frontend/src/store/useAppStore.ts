@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 export interface TabProfile {
   tabName: string
@@ -38,24 +39,38 @@ interface AppStore {
   clearChat: () => void
 }
 
-export const useAppStore = create<AppStore>((set) => ({
-  activeDataset: null,
-  datasets: [],
-  view: 'executive',
-  tier: 'executive',
-  activeTab: null,
-  chatMessages: [],
-  setActiveDataset: (dataset) => set((state) => ({
-    activeDataset: dataset,
-    // Keep existing activeTab if it belongs to new dataset, else use first tab
-    activeTab: dataset
-      ? (dataset.tabNames.includes(state.activeTab ?? '') ? state.activeTab : dataset.tabNames[0] ?? null)
-      : null,
-  })),
-  setDatasets: (datasets) => set({ datasets }),
-  setView: (view) => set({ view }),
-  setTier: (tier) => set({ tier }),
-  setActiveTab: (tab) => set({ activeTab: tab }),
-  addChatMessage: (msg) => set((s) => ({ chatMessages: [...s.chatMessages, msg] })),
-  clearChat: () => set({ chatMessages: [] }),
-}))
+export const useAppStore = create<AppStore>()(
+  persist(
+    (set) => ({
+      activeDataset: null,
+      datasets: [],
+      view: 'executive',
+      tier: 'executive',
+      activeTab: null,
+      chatMessages: [],
+      setActiveDataset: (dataset) => set((state) => ({
+        activeDataset: dataset,
+        // Keep existing activeTab if it belongs to new dataset, else use first tab
+        activeTab: dataset
+          ? (dataset.tabNames.includes(state.activeTab ?? '') ? state.activeTab : dataset.tabNames[0] ?? null)
+          : null,
+      })),
+      setDatasets: (datasets) => set({ datasets }),
+      setView: (view) => set({ view }),
+      setTier: (tier) => set({ tier }),
+      setActiveTab: (tab) => set({ activeTab: tab }),
+      addChatMessage: (msg) => set((s) => ({ chatMessages: [...s.chatMessages, msg] })),
+      clearChat: () => set({ chatMessages: [] }),
+    }),
+    {
+      name: 'pulseai-session',
+      // Only persist selection state — not ephemeral lists or chat history
+      partialize: (state) => ({
+        activeDataset: state.activeDataset,
+        activeTab: state.activeTab,
+        tier: state.tier,
+        view: state.view,
+      }),
+    }
+  )
+)
