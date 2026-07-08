@@ -110,7 +110,7 @@ txt(s1, "Enterprise-grade AI analytics platform that transforms\nExcel & CSV fil
     0.55, 3.65, 5.7, 1.5, size=11.5, color=GRAY_300)
 
 # Stat pills bottom-left
-for i, (val, lbl) in enumerate([("200+", "Rows Analyzed"), ("6", "Tab Support"), ("GPT-4o", "AI Engine")]):
+for i, (val, lbl) in enumerate([("3,411+", "Rows Analyzed"), ("5", "Excel Tabs"), ("GPT-4o", "AI Engine")]):
     bx = 0.55 + i * 1.9
     rect(s1, bx, 5.5, 1.7, 0.7, fill=SLATE_800)
     rect(s1, bx, 5.5, 0.04, 0.7, fill=BLUE)
@@ -129,7 +129,7 @@ rect(s1, 6.8, 0.25, 0.04, 7.0, fill=INDIGO)
 txt(s1, "LIVE DEMO SNAPSHOT", 7.1, 0.35, 5.5, 0.35, size=8, color=INDIGO, bold=True)
 
 # KPI row
-for i, (v, l, c) in enumerate([("$12.4M","Total Loans",BLUE),("18%","Default Rate",RED),("742","Avg Credit",EMERALD)]):
+for i, (v, l, c) in enumerate([("$743.9M","Total Outstanding",BLUE),("34%","Default+Watch Rate",RED),("657","Avg Credit Score",EMERALD)]):
     cx = 7.1 + i*1.95
     rect(s1, cx, 0.8, 1.8, 0.9, fill=SLATE_800)
     rect(s1, cx, 0.8, 0.04, 0.9, fill=c)
@@ -282,10 +282,10 @@ badge(s5, "LIVE FEATURE", 10.5, 0.25, 2.1, 0.45, bg=BLUE)
 
 # Left: mock dashboard
 rect(s5, 0.4, 1.2, 7.5, 5.9, fill=RGBColor(0x06,0x0D,0x20))
-txt(s5, "FinanceData_MultiTab.xlsx  |  Loans tab", 0.55, 1.3, 7.0, 0.3, size=8.5, color=GRAY_500)
+txt(s5, "Banking_LoanPortfolio.xlsx  |  Loans tab", 0.55, 1.3, 7.0, 0.3, size=8.5, color=GRAY_500)
 
 # KPI cards
-for i, (v, l, c) in enumerate([("$2.1M","Total Principal",BLUE),("$11.7K","Avg EMI",INDIGO),("14%","Default Rate",RED),("742","Avg Credit",EMERALD)]):
+for i, (v, l, c) in enumerate([("$743.9M","Total Outstanding",BLUE),("34%","Default+Watch Rate",RED),("657","Avg Credit Score",EMERALD),("80 days","Avg DPD",AMBER)]):
     cx = 0.55 + i * 1.8
     rect(s5, cx, 1.7, 1.65, 0.85, fill=SLATE_800)
     txt(s5, v, cx+0.1, 1.74, 1.45, 0.36, size=14, bold=True, color=c)
@@ -295,7 +295,7 @@ for i, (v, l, c) in enumerate([("$2.1M","Total Principal",BLUE),("$11.7K","Avg E
 rect(s5, 0.55, 2.72, 7.2, 0.75, fill=RGBColor(0x0F,0x17,0x2A))
 rect(s5, 0.55, 2.72, 0.04, 0.75, fill=INDIGO)
 txt(s5, "AI Narrative:", 0.68, 2.76, 2.0, 0.28, size=8, bold=True, color=INDIGO)
-txt(s5, '"The Loans dataset shows 180 active loans totalling $2.1M. 14% are in Default or Watch status,\nconcentrated in Personal and Revolving Credit types. Customers aged 35-50 carry the highest balances."',
+txt(s5, '"Banking_LoanPortfolio.xlsx / Loans shows a Default+Watch Rate of 34.0% with $743.9M total outstanding. Average credit score is 657 and average DPD is 80 days. Outliers detected in outstanding_balance and EMI — these may warrant risk escalation."',
     0.68, 3.02, 7.0, 0.38, size=7.5, color=GRAY_300, italic=True)
 
 # Charts row
@@ -313,7 +313,7 @@ for i, (t, c) in enumerate([("Principal Distribution", BLUE), ("Loan Status Brea
 
 # Right: features list
 feats = [
-    ("KPI Cards", "Auto-computes sum, avg, min, max for every numeric column"),
+    ("KPI Cards", "Smart KPI engine: rate KPIs from status columns, currency totals, score averages — color-coded red/green/blue"),
     ("AI Narrative", "GPT-4o writes a plain-English paragraph describing the dataset"),
     ("6 Chart Types", "Histogram, scatter, heatmap, box plots, bar, donut — all automatic"),
     ("Outlier Alerts", "Flags anomalies and statistical warnings in the data"),
@@ -471,25 +471,25 @@ txt(s8, "Real-world scenarios where PulseAI delivers immediate value", 0.35, 0.6
 badge(s8, "USE CASES", 10.7, 0.25, 1.9, 0.45, bg=AMBER, fg=RGBColor(0,0,0))
 
 cases = [
-    (BLUE,   "Banking & Financial Services",
-     "Risk Management",
-     "Upload loan portfolio data. Instantly identify default-risk customers (DPD > 60),\noutstanding balance concentration, and collateral coverage gaps.",
-     ["Loan default prediction", "Portfolio concentration risk", "Credit score distribution", "Cross-tab: loan type vs status"]),
-    (EMERALD,"Insurance",
-     "Claims Analytics",
-     "Analyze claims history CSV. Spot high-frequency claimants, fraud indicators,\nand seasonal patterns without any SQL or BI tool setup.",
-     ["High-value claims table", "Fraud pattern detection", "Regional claim frequency", "Policy type breakdown"]),
-    (INDIGO, "Retail & E-Commerce",
-     "Sales Performance",
-     "Drop in monthly sales Excel. Get instant revenue KPIs, top/bottom product\nperformers, regional breakdowns, and AI-written executive summary.",
-     ["Top 10 products by revenue", "Region vs category cross-tab", "Return rate outliers", "Month-over-month trend"]),
-    (AMBER,  "HR & Workforce",
-     "People Analytics",
-     "Upload headcount data. Identify attrition risks, compensation outliers,\ndepartment overstaffing, and diversity metrics in minutes.",
-     ["Attrition risk table", "Salary distribution by grade", "Tenure vs performance", "Department headcount"]),
+    (BLUE,   "Banking & Financial Services", "Risk Management",
+     "Upload Banking_LoanPortfolio.xlsx (5 tabs, 1,820 rows). Instantly identify\ndefault-risk customers, outstanding balance concentration, and DPD trends.",
+     ["34% Default+Watch Rate detected", "Portfolio concentration risk", "Credit score distribution", "Cross-tab: loan type vs status"],
+     [("34%","Default+Watch",RED),("$743.9M","Outstanding",BLUE),("657","Avg Credit",EMERALD)]),
+    (EMERALD,"Insurance", "Claims Analytics",
+     "Analyze Insurance_Claims.xlsx (4 tabs, 1,230 rows). Spot high-frequency\nclaimants, fraud indicators, and seasonal patterns without any SQL.",
+     ["40% claims flagged for fraud", "180 fraud indicators found", "17.3% rejection rate", "61-day avg processing time"],
+     [("40%","Fraud Flagged",RED),("180","Indicators",AMBER),("61 days","Avg Processing",EMERALD)]),
+    (INDIGO, "Retail & E-Commerce", "Sales Performance",
+     "Drop in Retail_Sales.xlsx (5 tabs, 3,062 rows). Get revenue KPIs,\ntop/bottom performers, regional breakdowns, and AI-written summaries.",
+     ["21.4% return rate detected", "Top 3 categories nearly equal share", "$401.1M total line revenue", "16.4% cancelled order rate"],
+     [("21.4%","Return Rate",RED),("$401.1M","Revenue",BLUE),("16.4%","Cancelled",AMBER)]),
+    (AMBER,  "HR & Workforce", "People Analytics",
+     "Upload HR_Workforce.xlsx (5 tabs, 3,411 rows). Identify attrition risks,\ncompensation outliers, and diversity metrics in minutes.",
+     ["66.8% active employee rate", "5 departments at attrition risk", "1.09x gender pay gap detected", "$548.3M total payroll"],
+     [("66.8%","Active Rate",EMERALD),("$548.3M","Payroll",BLUE),("1.09x","Pay Gap",AMBER)]),
 ]
 
-for i, (col, domain, title, desc, bullets) in enumerate(cases):
+for i, (col, domain, title, desc, bullets, metrics) in enumerate(cases):
     row = i // 2
     col_pos = i % 2
     bx = 0.4 + col_pos * 6.4
@@ -498,9 +498,16 @@ for i, (col, domain, title, desc, bullets) in enumerate(cases):
     rect(s8, bx, by, 6.1, 0.05, fill=col)
     badge(s8, domain, bx+0.1, by+0.12, 2.5, 0.38, bg=RGBColor(0x06,0x0B,0x18), fg=col, size=8)
     txt(s8, title, bx+0.15, by+0.6, 5.8, 0.35, size=13, bold=True, color=WHITE)
-    txt(s8, desc, bx+0.15, by+0.98, 3.5, 0.75, size=8.5, color=GRAY_300)
+    txt(s8, desc, bx+0.15, by+0.98, 3.5, 0.65, size=8, color=GRAY_300)
+    # Metric tiles (3 small tiles below desc)
+    for k, (mv, ml, mc) in enumerate(metrics):
+        mx = bx+0.15 + k*1.95
+        rect(s8, mx, by+1.72, 1.8, 0.72, fill=RGBColor(0x06,0x0B,0x18))
+        txt(s8, mv, mx+0.08, by+1.76, 1.65, 0.34, size=13, bold=True, color=mc)
+        txt(s8, ml, mx+0.08, by+2.08, 1.65, 0.28, size=7, color=GRAY_300)
+    # Sample questions on right side
     for j, b in enumerate(bullets):
-        txt(s8, f"-> {b}", bx+3.8, by+0.62+j*0.47, 2.2, 0.42, size=8, color=col)
+        txt(s8, f"-> {b}", bx+3.8, by+0.62+j*0.47, 2.2, 0.42, size=7.5, color=col)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -598,17 +605,18 @@ for i, (cat, col, items) in enumerate(categories):
 s11 = slide()
 rect(s11, 0, 0, 13.33, 1.1, fill=RGBColor(0x06,0x0B,0x18))
 rect(s11, 0, 0, 0.06, 1.1, fill=AMBER)
-txt(s11, "Live Example — Finance Dataset", 0.35, 0.12, 9, 0.5, size=22, bold=True, color=WHITE)
-txt(s11, "FinanceData_MultiTab.xlsx — 6 tabs, 2,530 rows, real FK relationships", 0.35, 0.62, 10, 0.35, size=11, color=GRAY_300)
-badge(s11, "DEMO DATA", 10.7, 0.25, 1.9, 0.45, bg=AMBER, fg=RGBColor(0,0,0))
+txt(s11, "Live Example — Banking Loan Portfolio", 0.35, 0.12, 9, 0.5, size=22, bold=True, color=WHITE)
+txt(s11, "Banking_LoanPortfolio.xlsx — 5 tabs, 1,820 rows, real FK relationships auto-detected", 0.35, 0.62, 10, 0.35, size=11, color=GRAY_300)
+badge(s11, "BANKING DEMO", 10.7, 0.25, 1.9, 0.45, bg=AMBER, fg=RGBColor(0,0,0))
 
 # Tab list
-tabs = [("Customers","200 rows","customer_id, segment, city, credit_score, annual_income"),
-        ("Accounts","350 rows","account_id, customer_id, type, balance, interest_rate"),
-        ("Transactions","1,000 rows","transaction_id, account_id, date, amount, DR/CR"),
-        ("Loans","180 rows","loan_id, customer_id, type, amount, outstanding, dpd"),
-        ("Loan_Payments","600 rows","payment_id, loan_id, date, scheduled, amount_paid"),
-        ("Portfolio","200 rows","customer_id, total_balance, total_loans, net_worth, LTV")]
+tabs = [
+    ("Customers",    "200 rows",  "customer_id, full_name, age, segment, city, annual_income, kyc_status"),
+    ("Loans",        "300 rows",  "loan_id, customer_id, loan_type, outstanding_balance, dpd, loan_status, credit_score"),
+    ("Loan_Payments","900 rows",  "payment_id, loan_id, scheduled_emi, amount_paid, delay_days, payment_status"),
+    ("Credit_Bureau","200 rows",  "customer_id, bureau_score, active_loans_count, credit_utilization_pct, dpd_30_count"),
+    ("Collateral",   "220 rows",  "collateral_id, loan_id, collateral_type, market_value, ltv_ratio, status"),
+]
 
 txt(s11, "DATASET STRUCTURE", 0.5, 1.2, 5.0, 0.28, size=8.5, bold=True, color=AMBER)
 for i, (tab, rows, cols) in enumerate(tabs):
@@ -621,19 +629,18 @@ for i, (tab, rows, cols) in enumerate(tabs):
 # Relationships
 txt(s11, "FK RELATIONSHIPS DETECTED", 6.9, 1.2, 5.9, 0.28, size=8.5, bold=True, color=AMBER)
 rels = [
-    ("Accounts", "customer_id", "Customers", "customer_id", "One customer, many accounts"),
-    ("Transactions", "account_id", "Accounts", "account_id", "One account, many transactions"),
-    ("Loans", "customer_id", "Customers", "customer_id", "One customer, many loans"),
-    ("Loan_Payments", "loan_id", "Loans", "loan_id", "One loan, many payments"),
-    ("Portfolio", "customer_id", "Customers", "customer_id", "Aggregated view per customer"),
+    ("Loans",        "customer_id", "Customers",    "customer_id", "One customer → many loans"),
+    ("Loan_Payments","loan_id",     "Loans",         "loan_id",    "One loan → many EMI payments"),
+    ("Credit_Bureau","customer_id", "Customers",    "customer_id", "Credit profile per customer"),
+    ("Collateral",   "loan_id",     "Loans",         "loan_id",    "Collateral pledged per loan"),
 ]
 for i, (t1, c1, t2, c2, desc) in enumerate(rels):
-    rect(s11, 6.9, 1.55+i*1.02, 6.0, 0.88, fill=SLATE_800)
-    rect(s11, 6.9, 1.55+i*1.02, 0.04, 0.88, fill=INDIGO)
-    txt(s11, f"{t1}.{c1}", 7.05, 1.6+i*1.02, 2.4, 0.28, size=9, bold=True, color=BLUE)
-    txt(s11, "->", 9.5, 1.6+i*1.02, 0.4, 0.28, size=11, bold=True, color=AMBER)
-    txt(s11, f"{t2}.{c2}", 9.95, 1.6+i*1.02, 2.4, 0.28, size=9, bold=True, color=INDIGO)
-    txt(s11, desc, 7.05, 1.9+i*1.02, 5.7, 0.28, size=8, color=GRAY_300, italic=True)
+    rect(s11, 6.9, 1.55+i*1.12, 6.0, 0.88, fill=SLATE_800)
+    rect(s11, 6.9, 1.55+i*1.12, 0.04, 0.88, fill=INDIGO)
+    txt(s11, f"{t1}.{c1}", 7.05, 1.6+i*1.12, 2.4, 0.28, size=9, bold=True, color=BLUE)
+    txt(s11, "->", 9.5, 1.6+i*1.12, 0.4, 0.28, size=11, bold=True, color=AMBER)
+    txt(s11, f"{t2}.{c2}", 9.95, 1.6+i*1.12, 2.4, 0.28, size=9, bold=True, color=INDIGO)
+    txt(s11, desc, 7.05, 1.9+i*1.12, 5.7, 0.28, size=8, color=GRAY_300, italic=True)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -725,14 +732,14 @@ rect(s13, 10.2, 0.8, 2.6, 5.9, fill=SLATE_800)
 rect(s13, 10.2, 0.8, 2.6, 0.05, fill=INDIGO)
 txt(s13, "AT A GLANCE", 10.35, 0.92, 2.3, 0.28, size=8, bold=True, color=INDIGO)
 for i, (val, lbl) in enumerate([
-    ("3", "Core Features"),
+    ("5", "Product Features"),
     ("6", "Chart Types"),
-    ("6", "Excel Tabs"),
+    ("5", "Excel Tabs"),
     ("10", "AI Questions/Tab"),
     ("GPT-4o", "AI Engine"),
     ("< 2min", "Time to Insight"),
     ("Zero", "Code Required"),
-    ("100%", "Browser-Based"),
+    ("4", "Industry Use Cases"),
 ]):
     rect(s13, 10.3, 1.3+i*0.58, 2.3, 0.5, fill=RGBColor(0x0F,0x17,0x2A))
     txt(s13, val, 10.42, 1.33+i*0.58, 2.0, 0.26, size=11, bold=True, color=BLUE)
