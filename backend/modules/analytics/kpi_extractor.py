@@ -164,8 +164,11 @@ def _numeric_kpis(df: pd.DataFrame, seen: set, limit: int) -> List[Dict]:
             return True
         if _matches(c, _YEAR_COL_HINTS):
             return True
-        nuniq = df[c].nunique()
-        return nuniq > 0 and (nuniq / max(len(df), 1)) > 0.9
+        # High-cardinality check only for non-numeric columns (string IDs like phone, email)
+        if df[c].dtype == object:
+            nuniq = df[c].nunique()
+            return nuniq > 0 and (nuniq / max(len(df), 1)) > 0.9
+        return False
 
     for col in num_cols:
         if len(kpis) >= limit:
