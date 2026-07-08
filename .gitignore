@@ -36,7 +36,6 @@ ENV/
 # ── Uploaded / generated data files ──────────────────────────────────────────
 uploads/
 test_uploads/
-test_data/
 
 # ── Frontend ──────────────────────────────────────────────────────────────────
 node_modules/
