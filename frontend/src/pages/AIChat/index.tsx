@@ -3,12 +3,14 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { useAppStore } from '../../store/useAppStore'
 import { useWebSocket } from '../../hooks/useWebSocket'
+import PlotlyChart from '../../components/charts/PlotlyChart'
 
 interface Message {
   id: string
   role: 'user' | 'assistant'
   content: string
   isError?: boolean
+  chart?: { title: string; data: object[]; layout: object }
 }
 
 const FALLBACK_SUGGESTIONS = [
@@ -43,7 +45,7 @@ export function AIChat() {
   const { connected, error: wsError, send } = useWebSocket({
     datasetId: activeDataset?.id ?? null,
     onMessage: (data) => {
-      const msg = data as { answer?: string; error?: string; done?: boolean }
+      const msg = data as { answer?: string; error?: string; done?: boolean; chart?: { title: string; data: object[]; layout: object } }
       setIsWaiting(false)
       if (msg.error) {
         setMessages((prev) => [...prev, {
@@ -57,6 +59,7 @@ export function AIChat() {
           id: Date.now().toString(),
           role: 'assistant',
           content: msg.answer!,
+          chart: msg.chart,
         }])
       }
     },
@@ -208,6 +211,7 @@ export function AIChat() {
                 : 'bg-white/8 text-gray-100 border border-white/10 rounded-tl-sm'
             }`}>
               {msg.role === 'assistant' && !msg.isError ? (
+                <>
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
@@ -266,6 +270,17 @@ export function AIChat() {
                 >
                   {msg.content}
                 </ReactMarkdown>
+                {msg.chart && (
+                  <div className="mt-3 -mx-4 -mb-3 rounded-b-2xl overflow-hidden border-t border-white/10">
+                    <div className="px-4 pt-3 pb-1">
+                      <p className="text-xs font-semibold text-blue-300 flex items-center gap-1.5">
+                        <span>📊</span> {msg.chart.title}
+                      </p>
+                    </div>
+                    <PlotlyChart config={{ data: msg.chart.data, layout: msg.chart.layout }} />
+                  </div>
+                )}
+                </>
               ) : (
                 msg.content
               )}

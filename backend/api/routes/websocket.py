@@ -133,6 +133,170 @@ def _build_analytics_context(dfs: dict) -> str:
     return "\n\n---\n\n".join(parts)
 
 
+_CHART_KEYWORDS = re.compile(
+    r"\b(highest|lowest|most|least|top|bottom|average|avg|compare|comparison|"
+    r"distribution|breakdown|which\s+\w+\s+has|by\s+\w+|per\s+\w+|"
+    r"trend|over\s+time|month|year|rank|ranking|proportion|percentage|percent|"
+    r"across|between|among)\b",
+    re.IGNORECASE,
+)
+
+
+def _is_chart_question(question: str) -> bool:
+    return bool(_CHART_KEYWORDS.search(question)) and not _is_table_question(question)
+
+
+def _fuzzy_col_match(df, question_lower: str) -> tuple[list, list]:
+    """
+    Find which DataFrame columns are mentioned in the question.
+    Uses word-boundary matching to avoid false positives like 'age' inside 'average'.
+    Also does a partial-word match so 'balance' in the question matches 'outstanding_balance'.
+    Returns (cat_cols_found, num_cols_found) sorted by match score desc (exact > partial).
+    """
+    import pandas as pd
+
+    # Short stop-words that cause false positives even at word boundaries
+    _STOP = {"id", "no", "to", "on", "at", "by", "in", "of", "or", "is", "as", "an"}
+
+    def _score(col: str) -> int:
+        col_lower = col.lower()
+        needle = col_lower.replace("_", " ")
+        # Exact underscore form in question e.g. "annual_income" (score 3)
+        if col_lower in question_lower:
+            return 3
+        # Exact space form at word boundary (score 3)
+        if re.search(r"\b" + re.escape(needle) + r"\b", question_lower):
+            return 3
+        # Plural variant — "loan types" matches "loan_type" (score 2)
+        if re.search(r"\b" + re.escape(needle) + r"s?\b", question_lower):
+            return 2
+        if needle.endswith("s") and re.search(r"\b" + re.escape(needle[:-1]) + r"\b", question_lower):
+            return 2
+        # Any significant word (>3 chars) from the column name appears (score 1)
+        # len>3 avoids "age" matching "average", "sum" matching "summary", etc.
+        words = [w for w in needle.split() if len(w) > 3 and w not in _STOP]
+        if words and any(re.search(r"\b" + re.escape(w) + r"\b", question_lower) for w in words):
+            return 1
+        return 0
+
+    cat_matches, num_matches = [], []
+    for col in df.columns:
+        s = _score(col)
+        if s > 0:
+            if pd.api.types.is_numeric_dtype(df[col]):
+                num_matches.append((col, s))
+            else:
+                cat_matches.append((col, s))
+
+    # Sort by score desc then col length desc so best matches come first
+    cat_matches.sort(key=lambda x: (x[1], len(x[0])), reverse=True)
+    num_matches.sort(key=lambda x: (x[1], len(x[0])), reverse=True)
+    return [c for c, _ in cat_matches], [c for c, _ in num_matches]
+
+
+def _make_bar_chart(df, grp_col: str, num_col: str, title: str, agg: str = "mean", color: str = "#3b82f6") -> dict:
+    import pandas as pd
+    grouped = df.groupby(grp_col)[num_col].agg(agg).reset_index()
+    grouped = grouped.sort_values(num_col, ascending=False).head(20)
+    agg_label = "Avg" if agg == "mean" else "Total"
+    return {
+        "title": title,
+        "data": [{
+            "type": "bar",
+            "x": grouped[grp_col].astype(str).tolist(),
+            "y": grouped[num_col].round(2).tolist(),
+            "marker": {"color": color},
+        }],
+        "layout": {
+            "xaxis": {"title": grp_col.replace("_", " ").title()},
+            "yaxis": {"title": f"{agg_label} {num_col.replace('_', ' ').title()}"},
+            "paper_bgcolor": "rgba(0,0,0,0)",
+            "plot_bgcolor": "rgba(0,0,0,0)",
+            "font": {"color": "#e2e8f0"},
+        },
+    }
+
+
+def _build_chart_data(dfs: dict, question: str) -> dict | None:
+    """
+    Attempt to compute a Plotly chart config for analytical/comparison questions.
+    Uses fuzzy column-name detection so natural-language column references work.
+    Returns None if we can't determine an appropriate chart.
+    """
+    import pandas as pd
+
+    q_lower = question.lower()
+    chart_title = question.rstrip("?").strip()[:80]
+    is_avg = bool(re.search(r"\b(average|avg|mean)\b", q_lower))
+    is_highest = bool(re.search(r"\b(highest|most|top|largest|greatest|maximum)\b", q_lower))
+    is_total = bool(re.search(r"\b(total|sum|overall)\b", q_lower))
+    agg = "mean" if (is_avg or is_highest) else ("sum" if is_total else "mean")
+
+    # Score each tab: prefer tabs where BOTH a cat and num col are mentioned (score=2),
+    # then tabs with only num (score=1), then only cat (score=0.5). Pick highest.
+    best_score, best_tab, best_df, best_cat, best_num = -1, None, None, [], []
+    for tab_name, df in dfs.items():
+        cat_cols, num_cols = _fuzzy_col_match(df, q_lower)
+        score = (2 if (cat_cols and num_cols) else
+                 1 if num_cols else
+                 0.5 if cat_cols else 0)
+        if score > best_score:
+            best_score, best_tab, best_df = score, tab_name, df
+            best_cat, best_num = cat_cols, num_cols
+
+    if best_df is None or best_score == 0:
+        return None
+
+    df = best_df
+    cat_cols, num_cols = best_cat, best_num
+
+    # ── Case 1: both cat and num cols mentioned in question ─────────────────
+    if cat_cols and num_cols:
+        grp_col = cat_cols[0]
+        num_col = num_cols[0]
+        if 2 <= df[grp_col].nunique() <= 30:
+            color = "#3b82f6" if agg == "mean" else "#10b981"
+            return _make_bar_chart(df, grp_col, num_col, chart_title, agg, color)
+
+    # ── Case 2: only numeric → pair with best semantic cat col ──────────────
+    if num_cols and not cat_cols:
+        num_col = num_cols[0]
+        cat_candidates = [
+            c for c in df.select_dtypes(include="object").columns
+            if 2 <= df[c].nunique() <= 20
+        ]
+        if cat_candidates:
+            hint_words = ("type", "status", "category", "tier", "class", "segment", "region", "city")
+            preferred = [c for c in cat_candidates if any(h in c.lower() for h in hint_words)]
+            grp_col = preferred[0] if preferred else cat_candidates[0]
+            return _make_bar_chart(df, grp_col, num_col, chart_title, agg, "#8b5cf6")
+
+    # ── Case 3: only categorical → count distribution ────────────────────────
+    if cat_cols and not num_cols:
+        grp_col = cat_cols[0]
+        if 2 <= df[grp_col].nunique() <= 30:
+            counts = df[grp_col].value_counts().reset_index()
+            counts.columns = [grp_col, "count"]
+            return {
+                "title": chart_title,
+                "data": [{
+                    "type": "bar",
+                    "x": counts[grp_col].astype(str).tolist(),
+                    "y": counts["count"].tolist(),
+                    "marker": {"color": "#f59e0b"},
+                }],
+                "layout": {
+                    "xaxis": {"title": grp_col.replace("_", " ").title()},
+                    "yaxis": {"title": "Count"},
+                    "paper_bgcolor": "rgba(0,0,0,0)",
+                    "plot_bgcolor": "rgba(0,0,0,0)",
+                    "font": {"color": "#e2e8f0"},
+                },
+            }
+
+    return None
+
+
 def _ask_llm(dfs: dict, question: str) -> str:
     from backend.modules.ai.llm_factory import AccentureLbpassLLM
     from backend.config import Settings
@@ -206,7 +370,11 @@ async def websocket_chat(websocket: WebSocket, dataset_id: str):
             try:
                 dfs = parse_excel(file_path)
                 answer = _ask_llm(dfs, question)
-                await websocket.send_text(json.dumps({"answer": answer, "done": True}))
+                chart = _build_chart_data(dfs, question) if _is_chart_question(question) else None
+                payload: dict = {"answer": answer, "done": True}
+                if chart:
+                    payload["chart"] = chart
+                await websocket.send_text(json.dumps(payload))
             except Exception as exc:
                 logger.error(f"Chat error: {exc}", exc_info=True)
                 await websocket.send_text(json.dumps({"error": f"Failed to process query: {exc}", "done": True}))
